@@ -151,7 +151,10 @@ class DefectDojoAPI(object):
             params['limit'] = limit
 
         if product_in:
-            params['product__in'] = product_in
+            if self.api_version=='v2':
+                params['product'] = product_in
+            else:
+                params['product__in'] = product_in
 
         if status:
             params['status'] = status
@@ -1117,10 +1120,16 @@ class DefectDojoAPI(object):
         if data:
             data = json.dumps(data)
 
-        headers = {
-            'User-Agent': self.user_agent,
-            'Authorization' : "ApiKey " + self.user + ":" + self.api_key
-        }
+        if self.api_version== 'v2':
+            headers = {
+                'User-Agent': self.user_agent,
+                'Authorization' : "Token " + self.api_key
+            }
+        else:
+            headers = {
+                'User-Agent': self.user_agent,
+                'Authorization' : "ApiKey " + self.user + ":" + self.api_key
+            }
 
         if not files:
             headers['Accept'] = 'application/json'
